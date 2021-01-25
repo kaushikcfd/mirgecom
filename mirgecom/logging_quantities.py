@@ -283,7 +283,7 @@ class DependentDiscretizationBasedQuantity(DiscretizationBasedQuantity):
             if quantity == "temperature":
                 unit = "K"
             elif quantity == "pressure":
-                unit = "P"
+                unit = "Pa"
             else:
                 unit = ""
             warn(f"Logging had to guess units for '{quantity}': '{unit}'."
