@@ -67,7 +67,7 @@ def compute_smoothness_indicator():
     #knl = lp.tag_array_axes(knl, "vec", "stride:auto,stride:auto")
     return knl
 
-def smoothness_indicator(u,discr):
+def smoothness_indicator(u,discr,sigma,kappa):
     
     assert isinstance(u,DOFArray)
 
@@ -117,13 +117,13 @@ def smoothness_indicator(u,discr):
     #kappa=0.5
     #so = -7.0
     # for first order?
-    kappa=0.5
-    so = -1.0
+    #kappa=0.5
+    #so = -3.0
 
     #Compute artificail viscosity percentage based on idicator and set parameters
-    yesnol = indicator > (so-kappa)
-    yesnou = indicator > (so+kappa)
-    sin_indicator = actx.np.where(yesnol,0.5*(1.0+actx.np.sin(np.pi *(indicator - so)/(2.0*kappa))),0.0*indicator)
+    yesnol = indicator > (sigma-kappa)
+    yesnou = indicator > (sigma+kappa)
+    sin_indicator = actx.np.where(yesnol,0.5*(1.0+actx.np.sin(np.pi *(indicator - sigma)/(2.0*kappa))),0.0*indicator)
     indicator = actx.np.where(yesnou,1.0+0.0*indicator,sin_indicator)
 
     return indicator

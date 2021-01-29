@@ -70,13 +70,13 @@ def _facial_flux_q(discr, q_tpair):
 
     return discr.project(q_tpair.dd, "all_faces", flux_out)
 
-def artificial_viscosity(discr, t, eos, boundaries, r, alpha):
+def artificial_viscosity(discr, t, eos, boundaries, r, alpha, sigma, kappa):
     r"""Compute artifical viscosity for the euler equations
 
     """
     #Get smoothness indicator
     epsilon = np.zeros((2+discr.dim,),dtype=object)
-    indicator = make_obj_array([smoothness_indicator(r[0],discr)])
+    indicator = make_obj_array([smoothness_indicator(r[0],discr,sigma=sigma,kappa=kappa)])
     for i in range(2+discr.dim):
         epsilon[i] = indicator
 

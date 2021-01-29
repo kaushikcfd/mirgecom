@@ -91,7 +91,7 @@ class ExactSolutionMismatch(Exception):
         self.state = state
 
 
-def sim_checkpoint(discr, visualizer, eos, q, vizname, exact_soln=None,
+def sim_checkpoint(discr, visualizer, eos, q, vizname, sigma, kappa, exact_soln=None,
                    step=0, t=0, dt=0, cfl=1.0, nstatus=-1, nviz=-1, exittol=1e-16,
                    constant_cfl=False, comm=None, overwrite=False, vis_timer=None):
     """Check simulation health, status, viz dumps, and restart."""
@@ -106,7 +106,7 @@ def sim_checkpoint(discr, visualizer, eos, q, vizname, exact_soln=None,
     dependent_vars = eos.dependent_vars(cv)
 	
     from mirgecom.tag_cells import smoothness_indicator
-    tagedcells = smoothness_indicator(q[0],discr)
+    tagedcells = smoothness_indicator(q[0],discr,sigma=sigma,kappa=kappa)
 
     rank = 0
     if comm is not None:

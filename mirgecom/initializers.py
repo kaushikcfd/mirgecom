@@ -321,7 +321,7 @@ class Discontinuity:
     """
 
     def __init__(
-            self,dim=2, x0=0., rhol=0.1, rhor=0.01, pl=20, pr=10., ul=0.1, ur=0., sigma=0.5
+            self,dim=2, x0=0., rhol=0.1, rhor=0.01, pl=20, pr=10., ul=0.1, ur=0., uc=0., sigma=0.5
     ):
         """Initialize initial condition options
 
@@ -343,6 +343,8 @@ class Discontinuity:
            left velocity
         ur: float
            right velocity
+        uc: float
+           convective velocity (discontinuity advection speed)
         sigma: float
            sharpness parameter
         """
@@ -354,6 +356,7 @@ class Discontinuity:
         self._pr = pr
         self._ul = ul
         self._ur = ur
+        self._uc = uc
         self._sigma = sigma
 
     def __call__(self, t, x_vec, eos=IdealSingleGas()):
@@ -377,7 +380,7 @@ class Discontinuity:
         zeros = 0*x_rel
         sigma=self._sigma
 
-        x0 = zeros + self._x0
+        x0 = zeros + self._uc*t + self._x0
         t = zeros + t
         
         rhol = zeros + self._rhol
