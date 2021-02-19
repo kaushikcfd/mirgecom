@@ -278,7 +278,7 @@ class Discontinuity:
     """
 
     def __init__(
-            self,dim=2, x0=0., rhol=0.1, rhor=0.01, pl=20, pr=10., ul=0.1, ur=0., uc=0., sigma=0.5
+            self,dim=2, x0=0., rhol=0.1, rhor=0.01, pl=20, pr=10., ul=None, ur=None, uc=None, sigma=0.5
     ):
         """Initialize initial condition options
 
@@ -305,6 +305,13 @@ class Discontinuity:
         sigma: float
            sharpness parameter
         """
+        if ul is None:
+            ul = np.zeros(shape=(dim,))
+        if ur is None:
+            ur = np.zeros(shape=(dim,))
+        if uc is None:
+            uc = np.zeros(shape=(dim,))
+
         self._dim = dim
         self._x0 = x0
         self._rhol = rhol
@@ -335,15 +342,16 @@ class Discontinuity:
         actx = x_rel.array_context
         gm1 = eos.gamma() - 1.0
         zeros = 0*x_rel
+        ones = zeros + 1.0
         sigma=self._sigma
 
-        x0 = zeros + self._uc*t + self._x0
+        x0 = zeros + self._uc[0]*t + self._x0
         t = zeros + t
         
         rhol = zeros + self._rhol
         rhor = zeros + self._rhor
-        ul = zeros + self._ul
-        ur = zeros + self._ur
+        ul = self._ul * ones
+        ur = self._ur * ones
         rhoel = zeros + self._pl/gm1
         rhoer = zeros + self._pr/gm1
 
@@ -352,17 +360,9 @@ class Discontinuity:
         rhoe = rhoel/2.0*(actx.np.tanh(-xtanh)+1.0)+rhoer/2.0*(actx.np.tanh(xtanh)+1.0)
         u = ul/2.0*(actx.np.tanh(-xtanh)+1.0)+ur/2.0*(actx.np.tanh(xtanh)+1.0)
         rhou = mass*u
-        energy = rhoe + 0.5*mass*(u*u)
+        energy = rhoe + 0.5*mass*(np.dot(u,u))
 
-        mom = make_obj_array(
-            [
-                0*x_rel
-                for i in range(self._dim)
-            ]
-        )
-        mom[0]=rhou
-
-        return flat_obj_array(mass, energy, mom)
+        return join_conserved(dim=self._dim, mass=mass, energy=energy, momentum=rhou)
 
 
 class DoubleMachReflection:
@@ -478,6 +478,7 @@ class DoubleMachReflection:
         energy = rhoe + 0.5*mass*(u*u + v*v)
 
         return flat_obj_array(mass, energy, rhou, rhov)
+        return join_conserved(dim=self._dim, mass=mass, energy=energy, momentum=mom)
 
 
 class Lump:
