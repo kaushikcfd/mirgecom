@@ -27,6 +27,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
+import numpy as np
+
 
 def _pyro_thermochem_wrapper_class(cantera_soln, temperature_niter=5):
     """Return a MIRGE-compatible wrapper for a :mod:`pyrometheus` mechanism class.
@@ -49,7 +51,8 @@ def _pyro_thermochem_wrapper_class(cantera_soln, temperature_niter=5):
         Number of Newton iterations in `get_temperature` (default=5)
     """
     import pyrometheus as pyro
-    pyro_class = pyro.get_thermochem_class(cantera_soln)
+    pyro_class = pyro.get_thermochem_class(cantera_soln,
+                                           np_ary_dtype=np.dtype(object))
 
     class PyroWrapper(pyro_class):
 

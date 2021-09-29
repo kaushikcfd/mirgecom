@@ -220,7 +220,7 @@ def main(ctx_factory=cl.create_some_context, use_logmgr=True,
     i_fu = cantera_soln.species_index("C2H4")
     i_ox = cantera_soln.species_index("O2")
     i_di = cantera_soln.species_index("N2")
-    x = np.zeros(nspecies)
+    x = np.zeros(nspecies, dtype=object)
     # Set the species mole fractions according to our desired fuel/air mixture
     x[i_fu] = (ox_di_ratio*equiv_ratio)/(stoich_ratio+ox_di_ratio*equiv_ratio)
     x[i_ox] = stoich_ratio*x[i_fu]/equiv_ratio
@@ -259,7 +259,7 @@ def main(ctx_factory=cl.create_some_context, use_logmgr=True,
     # Initialize the fluid/gas state with Cantera-consistent data:
     # (density, pressure, temperature, mass_fractions)
     print(f"Cantera state (rho,T,P,Y) = ({can_rho}, {can_t}, {can_p}, {can_y}")
-    velocity = np.zeros(shape=(dim,))
+    velocity = np.zeros(shape=(dim,), dtype=object)
     initializer = MixtureInitializer(dim=dim, nspecies=nspecies,
                                      pressure=can_p, temperature=can_t,
                                      massfractions=can_y, velocity=velocity)

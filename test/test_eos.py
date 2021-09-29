@@ -98,7 +98,7 @@ def test_pyrometheus_mechanisms(ctx_factory, mechname, rate_tol, y0):
 
     press0 = 101500.0
     temp0 = 300.0
-    y0s = np.zeros(shape=(nspecies,))
+    y0s = np.zeros(shape=(nspecies,), dtype=object)
     for i in range(nspecies-1):
         y0s[i] = y0 / (10.0 ** (i + 1))
     y0s[-1] = 1.0 - np.sum(y0s[:-1])
@@ -208,11 +208,11 @@ def test_pyrometheus_eos(ctx_factory, mechname, dim, y0, vel):
 
     press0 = 101500.0
     temp0 = 300.0
-    y0s = np.zeros(shape=(nspecies,))
+    y0s = np.zeros(shape=(nspecies,), dtype=object)
     for i in range(1, nspecies):
         y0s[i] = y0 / (10.0 ** i)
     y0s[0] = 1.0 - np.sum(y0s[1:])
-    velocity = vel * np.ones(shape=(dim,))
+    velocity = vel * np.ones(shape=(dim,), dtype=object)
 
     for fac in range(1, 7):
         tempin = fac * temp0
@@ -298,7 +298,7 @@ def test_pyrometheus_kinetics(ctx_factory, mechname, rate_tol, y0):
     # Pyrometheus initialization
     mech_cti = get_mechanism_cti(mechname)
     cantera_soln = cantera.Solution(phase_id="gas", source=mech_cti)
-    pyro_obj = pyro.get_thermochem_class(cantera_soln)(actx.np)
+    pyro_obj = pyro.get_thermochem_class(cantera_soln, np.dtype(object))(actx.np)
 
     nspecies = pyro_obj.num_species
     print(f"PrometheusMixture::NumSpecies = {nspecies}")
@@ -314,7 +314,7 @@ def test_pyrometheus_kinetics(ctx_factory, mechname, rate_tol, y0):
     i_fu = cantera_soln.species_index("H2")
     i_ox = cantera_soln.species_index("O2")
     i_di = cantera_soln.species_index("N2")
-    x = np.zeros(shape=(nspecies,))
+    x = np.zeros(shape=(nspecies,), dtype=object)
     x[i_fu] = (ox_di_ratio*equiv_ratio)/(stoich_ratio+ox_di_ratio*equiv_ratio)
     x[i_ox] = stoich_ratio*x[i_fu]/equiv_ratio
     x[i_di] = (1.0-ox_di_ratio)*x[i_ox]/ox_di_ratio
@@ -338,7 +338,7 @@ def test_pyrometheus_kinetics(ctx_factory, mechname, rate_tol, y0):
         # Get state from Cantera
         can_t = reactor.T
         can_rho = reactor.density
-        can_y = reactor.Y
+        can_y = reactor.Y.astype(object)
         print(f"can_y = {can_y}")
 
         tin = can_t * ones
@@ -402,8 +402,8 @@ def test_idealsingle_lump(ctx_factory, dim):
     nodes = thaw(actx, discr.nodes())
 
     # Init soln with Vortex
-    center = np.zeros(shape=(dim,))
-    velocity = np.zeros(shape=(dim,))
+    center = np.zeros(shape=(dim,), dtype=object)
+    velocity = np.zeros(shape=(dim,), dtype=object)
     velocity[0] = 1
     lump = Lump(dim=dim, center=center, velocity=velocity)
     eos = IdealSingleGas()
